@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Chat
+{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <h3 align="center">Edit Chat</h3>
+
+  <div class="form-group">
+    {{ form.data.label }}
+    {{ form.data(class="form-control", placeholder="Enter chat content") }}
+    {% if form.data.errors %}
+      <div class="text-danger">
+        {% for error in form.data.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    {{ form.img.label }}
+    {{ form.img(class="form-control-file") }}
+    {% if form.img.errors %}
+      <div class="text-danger">
+        {% for error in form.img.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}

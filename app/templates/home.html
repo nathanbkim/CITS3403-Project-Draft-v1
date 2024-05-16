@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<h3 align="center">Add New Chat</h3>
+<form method="POST" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  
+  <div class="form-group">
+    {{ form.data.label }}
+    {{ form.data(class="form-control", placeholder="Enter chat content") }}
+    {% if form.data.errors %}
+      <div class="text-danger">
+        {% for error in form.data.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    {{ form.img.label }}
+    {{ form.img(class="form-control-file") }}
+    {% if form.img.errors %}
+      <div class="text-danger">
+        {% for error in form.img.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {{ form.submit(class="btn btn-primary") }}
+</form>
+
+<h3 align="center">Your Chats</h3>
+<ul class="list-group">
+  {% for chat in chats %}
+  <li class="list-group-item">
+    {{ chat.data }}
+    {% if chat.img_path %}
+      <br><img src="{{ url_for('static', filename='uploads/' ~ chat.img_path.split('/')[-1]) }}" class="img-thumbnail" width="200">
+    {% endif %}
+    <form method="POST" action="{{ url_for('views.delete_chat') }}" style="display:inline;">
+      <input type="hidden" name="chatId" value="{{ chat.id }}">
+      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+    </form>
+    <a href="{{ url_for('views.edit_chat', chat_id=chat.id) }}" class="btn btn-warning btn-sm">Edit</a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}
