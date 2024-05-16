@@ -31,23 +31,30 @@ def create_app():
         return User.query.get(int(id))
 
     with app.app_context():
-        initialize_or_upgrade_database()
+        initialize_or_upgrade_database(app)
 
     return app
 
-def initialize_or_upgrade_database():
+def initialize_or_upgrade_database(app):
     """Initialize the migration repository and create the database if it doesn't exist, otherwise upgrade"""
+    migrations_dir = path.join(app.root_path, 'migrations')
+    
     if not path.exists('app/' + DB_NAME):
         makedirs(path.dirname('app/' + DB_NAME), exist_ok=True)
-        print("Initializing migration repository...")
-        from flask_migrate import init as flask_migrate_init
-        flask_migrate_init()
+        
+        if not path.exists(migrations_dir):
+            print("Initializing migration repository...")
+            from flask_migrate import init as flask_migrate_init
+            flask_migrate_init()
+        
         print("Generating initial migration...")
         from flask_migrate import migrate as flask_migrate_migrate
         flask_migrate_migrate(message="Initial migration")
+        
         print("Upgrading database schema...")
         from flask_migrate import upgrade as flask_migrate_upgrade
         flask_migrate_upgrade()
+        
         print('Created Database!')
     else:
         upgrade_database()
