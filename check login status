@@ -1,0 +1,44 @@
+// main.js
+document.getElementById('commentButton').addEventListener('click', function() {
+    checkLoginStatus();
+});
+
+function checkLoginStatus() {
+    fetch('check_login.php')
+        .then(response =&gt; response.json())
+        .then(data =&gt; {
+            if (data.loggedIn) {
+                document.getElementById('commentForm').style.display = 'block';
+            } else {
+                alert('You need to log in first!');
+                window.location.href = 'login.html';
+            }
+        })
+        .catch(error =&gt; console.error('Error:', error));
+}
+
+document.getElementById('submitComment').addEventListener('click', function() {
+    const comment = document.getElementById('commentText').value;
+    submitComment(comment);
+});
+
+function submitComment(comment) {
+    fetch('submit_comment.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: comment }),
+    })
+    .then(response =&gt; response.json())
+    .then(data =&gt; {
+        if (data.success) {
+            alert('Comment submitted successfully!');
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentForm').style.display = 'none';
+        } else {
+            alert('Failed to submit comment. Please try again.');
+        }
+    })
+    .catch(error =&gt; console.error('Error:', error));
+}
